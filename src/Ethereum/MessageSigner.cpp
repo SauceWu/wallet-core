@@ -17,7 +17,7 @@ std::string signMessageRust(const PrivateKey& privateKey, const std::string& mes
     input.set_message_type(msgType);
 
     if (chainId.has_value()) {
-        input.mutable_chain_id()->set_chain_id(static_cast<uint64_t>(chainId.value()));
+        input.mutable_chain_id()->set_chain_id(static_cast<uint64_t>(*chainId));
     }
 
     Rust::TWDataWrapper inputData(data(input.SerializeAsString()));

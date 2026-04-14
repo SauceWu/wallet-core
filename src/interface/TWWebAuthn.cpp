@@ -11,7 +11,7 @@ struct TWPublicKey *_Nullable TWWebAuthnGetPublicKey(TWData *_Nonnull attestatio
     const auto& attestationObjectData = *reinterpret_cast<const TW::Data*>(attestationObject);
     const auto publicKey = TW::WebAuthn::getPublicKey(attestationObjectData);
     if (publicKey.has_value()) {
-        return new TWPublicKey{ TW::PublicKey(publicKey.value()) };
+        return new TWPublicKey{ TW::PublicKey(*publicKey) };
     } else {
         return nullptr;
     }
@@ -23,7 +23,7 @@ TWData *_Nullable TWWebAuthnGetRSValues(TWData *_Nonnull signature) {
     if (!maybeRSValues.has_value()) {
         return nullptr;
     }
-    const auto& rsValues = maybeRSValues.value();
+    const auto& rsValues = *maybeRSValues;
     return TWDataCreateWithBytes(rsValues.data(), rsValues.size());
 }
 

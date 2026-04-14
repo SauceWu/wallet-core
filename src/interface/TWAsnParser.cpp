@@ -15,7 +15,7 @@ TWData *_Nullable TWAsnParserEcdsaSignatureFromDer(TWData *_Nonnull encoded) {
         if (!decoded) {
             return nullptr;
         }
-        return TWDataCreateWithBytes(decoded.value().data(), decoded.value().size());
+        return TWDataCreateWithBytes((*decoded).data(), (*decoded).size());
     } catch (...) {
         return nullptr;
     }

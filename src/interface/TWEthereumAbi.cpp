@@ -49,7 +49,7 @@ TWData* _Nonnull TWEthereumAbiEncode(struct TWEthereumAbiFunction* _Nonnull func
     Data encodedData;
     auto encoded = func_in->impl.encodeInput();
     if (encoded.has_value()) {
-        encodedData = encoded.value();
+        encodedData = *encoded;
     }
     return TWDataCreateWithData(&encodedData);
 }

@@ -199,12 +199,12 @@ MaybeData Function::encodeFunctionCall(const std::string& functionName, const Ba
 
 MaybeData Function::encodeParams(const BaseParams& params) {
     auto encoded = encodeFunctionCall("", params);
-    if (!encoded.has_value() || encoded.value().size() < FUNCTION_SIGNATURE_LEN) {
+    if (!encoded.has_value() || (*encoded).size() < FUNCTION_SIGNATURE_LEN) {
         return {};
     }
 
     // The encoded data includes the function call signature (4 bytes). Erase it.
-    return subData(encoded.value(), FUNCTION_SIGNATURE_LEN);
+    return subData(*encoded, FUNCTION_SIGNATURE_LEN);
 }
 
 } // namespace TW::Ethereum::ABI
