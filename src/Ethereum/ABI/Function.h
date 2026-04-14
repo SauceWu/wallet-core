@@ -56,7 +56,7 @@ public:
         if (!param.has_value() || !param->has_number_uint() || param->number_uint().bits() != bits) {
             return store(0);
         }
-        return data(*(param->number_uint()));
+        return data(param->number_uint().value());
     }
 
     /// Returns an input or output uint parameter.
