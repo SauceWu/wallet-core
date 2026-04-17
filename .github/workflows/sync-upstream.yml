@@ -1,0 +1,51 @@
+name: Sync Upstream & Notify
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch upstream
+        run: |
+          git remote add upstream https://github.com/trustwallet/wallet-core.git || true
+          git fetch upstream
+
+      - name: Check for new commits
+        id: check
+        run: |
+          UPSTREAM_REF=$(git rev-parse upstream/master 2>/dev/null || git rev-parse upstream/main)
+          MERGE_BASE=$(git merge-base HEAD $UPSTREAM_REF)
+          if [ "$MERGE_BASE" = "$UPSTREAM_REF" ]; then
+            echo "up_to_date=true" >> $GITHUB_OUTPUT
+          else
+            echo "up_to_date=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Merge upstream
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git merge upstream/master --no-edit || git merge upstream/main --no-edit
+          git push origin HEAD
+
+      - name: Trigger ceres_wallet_core submodule update
+        if: steps.check.outputs.up_to_date == 'false'
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
+            https://api.github.com/repos/SauceWu/ceres-wallet-core/dispatches \
+            -d '{"event_type":"wallet-core-updated"}'
