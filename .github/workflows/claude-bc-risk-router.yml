@@ -4,11 +4,7 @@ name: bc-risk-router
 # status check in Settings -> Branches -> branch protection rules for master and dev.
 
 on:
-  pull_request:
-    branches: [ master, dev ]
-    types: [ opened, synchronize, reopened, edited, ready_for_review ]
-  issue_comment:
-    types: [ created, edited, deleted ]
+  workflow_dispatch:
 
 permissions:
   contents: read
